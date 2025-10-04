@@ -1,12 +1,8 @@
 package com.bookapp.web;
 
-import com.bookapp.core.port.CatalogRepositoryPort;
-import com.bookapp.core.port.CommentRepositoryPort;
 import com.bookapp.core.service.CatalogService;
 import com.bookapp.core.service.CommentService;
-import com.bookapp.persistence.CatalogRepository;
-import com.bookapp.persistence.CommentRepository;
-import com.bookapp.persistence.DatabaseConnection;
+import com.bookapp.infrastructure.ApplicationInitializer;
 
 public class ApplicationContext {
     private static ApplicationContext instance;
@@ -15,13 +11,8 @@ public class ApplicationContext {
     private final CommentService commentService;
 
     private ApplicationContext() {
-        DatabaseConnection.initSchema();
-
-        CatalogRepositoryPort catalogRepo = new CatalogRepository();
-        CommentRepositoryPort commentRepo = new CommentRepository();
-
-        this.catalogService = new CatalogService(catalogRepo);
-        this.commentService = new CommentService(commentRepo);
+        this.catalogService = ApplicationInitializer.createCatalogService();
+        this.commentService = ApplicationInitializer.createCommentService();
     }
 
     public static synchronized ApplicationContext getInstance() {

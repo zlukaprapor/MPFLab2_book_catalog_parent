@@ -13,6 +13,7 @@
     <modules>
         <module>core</module>
         <module>persistence</module>
+        <module>infrastructure</module>
         <module>web</module>
     </modules>
 
@@ -23,7 +24,7 @@
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.11</logback.version>
         <junit.version>5.9.0</junit.version>
-        <archunit.version>1.0.1</archunit.version>
+        <archunit.version>1.4.1</archunit.version>
     </properties>
 
     <dependencyManagement>

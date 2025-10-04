@@ -31,6 +31,7 @@ public class BookController extends HttpServlet {
 
     @Override
     public void init() {
+
         ApplicationContext ctx = ApplicationContext.getInstance();
         this.catalogService = ctx.getCatalogService();
         this.commentService = ctx.getCommentService();

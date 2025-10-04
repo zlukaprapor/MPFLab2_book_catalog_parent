@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
     private static final Logger log = LoggerFactory.getLogger(DatabaseConnection.class);
-    private static final String URL = "jdbc:h2:mem:bookdb;DB_CLOSE_DELAY=-1";
+    private static final String URL = "jdbc:h2:file:~/bookdb;AUTO_SERVER=TRUE";
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 

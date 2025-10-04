@@ -69,10 +69,12 @@ class ArchitectureTest {
                 .layer("Web").definedBy("..web..")
                 .layer("Core").definedBy("..core..")
                 .layer("Persistence").definedBy("..persistence..")
+                .layer("Infrastructure").definedBy("..infrastructure..")
 
                 .whereLayer("Web").mayNotBeAccessedByAnyLayer()
-                .whereLayer("Core").mayOnlyBeAccessedByLayers("Web", "Persistence")
-                .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Web");
+                .whereLayer("Core").mayOnlyBeAccessedByLayers("Web", "Infrastructure", "Persistence")
+                .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Infrastructure", "Core")
+                .whereLayer("Infrastructure").mayOnlyBeAccessedByLayers("Web");
 
         rule.check(classes);
     }
