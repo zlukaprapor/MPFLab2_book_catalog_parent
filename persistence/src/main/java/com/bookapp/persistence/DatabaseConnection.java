@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
     private static final Logger log = LoggerFactory.getLogger(DatabaseConnection.class);
-    private static final String URL = "jdbc:h2:file:~/bookdb;AUTO_SERVER=TRUE";
+    private static final String URL = "jdbc:h2:mem:bookdb;DB_CLOSE_DELAY=-1";
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 
@@ -26,7 +26,7 @@ public class DatabaseConnection {
                     "title VARCHAR(255) NOT NULL, " +
                     "author VARCHAR(255) NOT NULL, " +
                     "isbn VARCHAR(20), " +
-                    "year INT)");
+                    "publication_year INT)");
 
             stmt.execute("CREATE TABLE IF NOT EXISTS comments (" +
                     "id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
@@ -35,9 +35,8 @@ public class DatabaseConnection {
                     "text VARCHAR(1000) NOT NULL, " +
                     "created_at TIMESTAMP NOT NULL, " +
                     "FOREIGN KEY (book_id) REFERENCES books(id))");
-
             // Sample books
-            stmt.execute("INSERT INTO books (title, author, isbn, year) VALUES " +
+            stmt.execute("INSERT INTO books (title, author, isbn, publication_year) VALUES " +
                     "('Clean Code', 'Robert Martin', '978-0132350884', 2008), " +
                     "('Design Patterns', 'Gang of Four', '978-0201633610', 1994), " +
                     "('Effective Java', 'Joshua Bloch', '978-0134685991', 2017), " +

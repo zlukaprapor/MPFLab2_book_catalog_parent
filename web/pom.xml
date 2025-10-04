@@ -73,6 +73,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.4.53.v20231009</version> <!-- ⬅️ ВИПРАВЛЕНО -->
                 <configuration>
                     <httpConnector>
                         <port>8080</port>
@@ -80,6 +81,7 @@
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
+                    <scanIntervalSeconds>10</scanIntervalSeconds> <!-- Auto-reload -->
                 </configuration>
             </plugin>
         </plugins>

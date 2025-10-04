@@ -11,6 +11,8 @@ import com.bookapp.core.service.CommentService;
 import com.bookapp.web.ApplicationContext;
 import com.bookapp.web.dto.ErrorResponse;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,23 +22,32 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/books", "/books/*"})
 public class BookController extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
-    private final Gson gson = new Gson();
+
+    // Конфігурований Gson з адаптером для LocalDateTime
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class,
+                    (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
+                            context.serialize(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+            .create();
+
     private CatalogService catalogService;
     private CommentService commentService;
 
     @Override
     public void init() {
-
         ApplicationContext ctx = ApplicationContext.getInstance();
         this.catalogService = ctx.getCatalogService();
         this.commentService = ctx.getCommentService();
     }
 
+    // Решта коду без змін...
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {

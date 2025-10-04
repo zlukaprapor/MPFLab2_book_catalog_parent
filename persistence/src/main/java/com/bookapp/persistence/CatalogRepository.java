@@ -14,11 +14,11 @@ public class CatalogRepository implements CatalogRepositoryPort {
 
     @Override
     public Page<Book> findBooks(String query, PageRequest pageRequest) {
-        String sql = buildSearchQuery(query, pageRequest);
+        String sql = buildSearchQuery(query);
         String countSql = buildCountQuery(query);
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            List<Book> books = executeSearchQuery(conn, sql, query);
+            List<Book> books = executeSearchQuery(conn, sql, query, pageRequest);
             long total = executeCountQuery(conn, countSql, query);
 
             return new Page<>(books, pageRequest.getPage(), pageRequest.getSize(), total);
@@ -29,7 +29,7 @@ public class CatalogRepository implements CatalogRepositoryPort {
 
     @Override
     public Optional<Book> findBookById(Long id) {
-        String sql = "SELECT id, title, author, isbn, year FROM books WHERE id = ?";
+        String sql = "SELECT id, title, author, isbn, publication_year FROM books WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -46,15 +46,14 @@ public class CatalogRepository implements CatalogRepositoryPort {
         }
     }
 
-    private String buildSearchQuery(String query, PageRequest pr) {
-        StringBuilder sql = new StringBuilder("SELECT id, title, author, isbn, year FROM books");
+    private String buildSearchQuery(String query) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT id, title, author, isbn, publication_year FROM books"
+        );
 
         if (query != null && !query.trim().isEmpty()) {
             sql.append(" WHERE LOWER(title) LIKE ? OR LOWER(author) LIKE ?");
         }
-
-        sql.append(" ORDER BY ").append(getSortColumn(pr.getSort()));
-        sql.append(" LIMIT ? OFFSET ?");
 
         return sql.toString();
     }
@@ -67,14 +66,25 @@ public class CatalogRepository implements CatalogRepositoryPort {
         return sql.toString();
     }
 
-    private List<Book> executeSearchQuery(Connection conn, String sql, String query) throws SQLException {
+    private List<Book> executeSearchQuery(Connection conn, String sql, String query, PageRequest pr)
+            throws SQLException {
+
+        // Додаємо ORDER BY, LIMIT, OFFSET
+        sql += " ORDER BY " + getSortColumn(pr.getSort()) + " LIMIT ? OFFSET ?";
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             int idx = 1;
+
+            // Параметри для WHERE
             if (query != null && !query.trim().isEmpty()) {
                 String pattern = "%" + query.toLowerCase() + "%";
                 stmt.setString(idx++, pattern);
                 stmt.setString(idx++, pattern);
             }
+
+            // Параметри для LIMIT і OFFSET
+            stmt.setInt(idx++, pr.getSize());
+            stmt.setInt(idx, pr.getPage() * pr.getSize());
 
             List<Book> books = new ArrayList<>();
             ResultSet rs = stmt.executeQuery();
@@ -100,7 +110,7 @@ public class CatalogRepository implements CatalogRepositoryPort {
 
     private String getSortColumn(String sort) {
         if ("author".equals(sort)) return "author";
-        if ("year".equals(sort)) return "year";
+        if ("year".equals(sort)) return "publication_year";
         return "title";
     }
 
@@ -110,7 +120,7 @@ public class CatalogRepository implements CatalogRepositoryPort {
                 rs.getString("title"),
                 rs.getString("author"),
                 rs.getString("isbn"),
-                rs.getInt("year")
+                rs.getInt("publication_year")
         );
     }
 }

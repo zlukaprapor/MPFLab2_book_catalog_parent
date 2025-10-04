@@ -6,9 +6,41 @@
 
 ```
 book-catalog-parent/
-├── core/          # Доменна логіка та порти (jar)
-├── persistence/   # Реалізація доступу до даних JDBC/H2 (jar)
-└── web/           # HTTP-інтерфейс Servlet API (war)
+├── pom.xml                          # Parent POM
+├── core/
+│   ├── pom.xml
+│   └── src/main/java/com/bookapp/core/
+│       ├── domain/                  # Book, Comment, Page, PageRequest
+│       ├── port/                    # CatalogRepositoryPort, CommentRepositoryPort
+│       ├── service/                 # CatalogService, CommentService
+│       └── exception/               # BusinessException, ValidationException
+├── persistence/
+│   ├── pom.xml
+│   └── src/main/java/com/bookapp/persistence/
+│       ├── DatabaseConnection.java  # H2 setup + schema
+│       ├── CatalogRepository.java   # Реалізація порту
+│       └── CommentRepository.java   # Реалізація порту
+├── infrastructure/
+│   ├── pom.xml
+│   └── src/main/java/com/bookapp/infrastructure/
+│       ├── ApplicationInitializer.java
+└── web/
+    ├── pom.xml
+    └── src/
+        ├── main/
+        │   ├── java/com/bookapp/web/
+        │   │   ├── ApplicationContext.java     # DI контейнер
+        │   │   ├── controller/
+        │   │   │   └── BookController.java     # Servlet контролер
+        │   │   └── dto/
+        │   │       └── ErrorResponse.java      # DTO для помилок
+        │   └── resources/
+        │   │    └── logback.xml                  # Конфігурація логування
+        │   └── webapp/                            # ⭐ НОВЕ
+        │       ├── index.html                     # Головна сторінка
+        │       └── book.html                      # Сторінка книги
+        └── test/java/com/bookapp/
+            └── ArchitectureTest.java            # ArchUnit тести
 ```
 
 ## Модулі
