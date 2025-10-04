@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деталі книги</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .book-detail {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .book-header {
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .book-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .book-author {
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .book-meta {
+            display: flex;
+            gap: 25px;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .comments-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .comments-header {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-comment-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background: #cc0000;
+        }
+
+        .comment {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-date {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .comment-text {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .no-comments {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .error, .success {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #ffe0e0;
+            color: #cc0000;
+            border-left: 4px solid #ff4444;
+        }
+
+        .success {
+            background: #e0ffe0;
+            color: #008800;
+            border-left: 4px solid #44ff44;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .book-detail, .comments-section {
+                padding: 25px;
+            }
+
+            .book-title {
+                font-size: 1.5rem;
+            }
+
+            .book-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-link">← Назад до каталогу</a>
+
+    <div id="loading" class="loading">Завантаження...</div>
+    <div id="error" class="error" style="display: none;"></div>
+    <div id="success" class="success" style="display: none;"></div>
+
+    <div id="bookDetail" style="display: none;">
+        <div class="book-detail">
+            <div class="book-header">
+                <h1 class="book-title" id="bookTitle"></h1>
+                <div class="book-author" id="bookAuthor"></div>
+                <div class="book-meta">
+                    <span id="bookIsbn"></span>
+                    <span id="bookYear"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="comments-section">
+            <div class="comments-header">
+                💬 Відгуки
+                <span id="commentCount"></span>
+            </div>
+
+            <div class="add-comment-form">
+                <h3 style="margin-bottom: 20px;">Додати відгук</h3>
+                <form id="commentForm" onsubmit="addComment(event)">
+                    <div class="form-group">
+                        <label for="authorInput">Ваше ім'я</label>
+                        <input
+                                type="text"
+                                id="authorInput"
+                                maxlength="100"
+                                required
+                                placeholder="Введіть ваше ім'я">
+                    </div>
+                    <div class="form-group">
+                        <label for="textInput">Ваш відгук</label>
+                        <textarea
+                                id="textInput"
+                                maxlength="1000"
+                                required
+                                placeholder="Поділіться своїми враженнями про книгу..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Додати відгук</button>
+                </form>
+            </div>
+
+            <div id="commentsList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let bookId;
+    let comments = [];
+
+    async function loadBookDetails() {
+        const params = new URLSearchParams(window.location.search);
+        bookId = params.get('id');
+
+        if (!bookId) {
+            showError('ID книги не вказано');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/books/${bookId}`);
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('Книгу не знайдено');
+                }
+                throw new Error('Помилка завантаження даних');
+            }
+
+            const data = await response.json();
+            displayBook(data.book);
+            displayComments(data.comments);
+            comments = data.comments;
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('bookDetail').style.display = 'block';
+        } catch (error) {
+            showError(error.message);
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function displayBook(book) {
+        document.getElementById('bookTitle').textContent = book.title;
+        document.getElementById('bookAuthor').textContent = '✍️ ' + book.author;
+
+        if (book.isbn) {
+            document.getElementById('bookIsbn').textContent = '📖 ISBN: ' + book.isbn;
+        }
+
+        if (book.year) {
+            document.getElementById('bookYear').textContent = '📅 Рік: ' + book.year;
+        }
+    }
+
+    function displayComments(commentsList) {
+        const container = document.getElementById('commentsList');
+        const count = document.getElementById('commentCount');
+
+        count.textContent = `(${commentsList.length})`;
+
+        if (commentsList.length === 0) {
+            container.innerHTML = '<div class="no-comments">Ще немає відгуків. Будьте першим!</div>';
+            return;
+        }
+
+        container.innerHTML = commentsList.map(comment => {
+            const createdAt = new Date(comment.createdAt);
+            const now = new Date();
+            const hoursDiff = (now - createdAt) / (1000 * 60 * 60);
+            const canDelete = hoursDiff <= 24;
+
+            return `
+                <div class="comment" id="comment-${comment.id}">
+                    <div class="comment-header">
+                        <span class="comment-author">${escapeHtml(comment.author)}</span>
+                        <span class="comment-date">${formatDate(comment.createdAt)}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(comment.text)}</div>
+                    ${canDelete ? `
+                        <div class="comment-actions">
+                            <button class="btn btn-danger" onclick="deleteComment(${comment.id})">
+                                🗑️ Видалити
+                            </button>
+                            <span style="color: #999; font-size: 0.85rem;">
+                                (можна видалити протягом 24 год)
+                            </span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function addComment(event) {
+        event.preventDefault();
+
+        const author = document.getElementById('authorInput').value.trim();
+        const text = document.getElementById('textInput').value.trim();
+
+        if (!author || !text) {
+            showError('Заповніть всі поля');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/books/${bookId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ author, text })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Помилка додавання відгуку');
+            }
+
+            const newComment = await response.json();
+            comments.unshift(newComment);
+            displayComments(comments);
+
+            document.getElementById('commentForm').reset();
+            showSuccess('Відгук успішно додано!');
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    async function deleteComment(commentId) {
+        if (!confirm('Ви впевнені, що хочете видалити цей відгук?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/books/${bookId}/comments/${commentId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Помилка видалення відгуку');
+            }
+
+            comments = comments.filter(c => c.id !== commentId);
+            displayComments(comments);
+            showSuccess('Відгук видалено!');
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'щойно';
+        if (diffMins < 60) return `${diffMins} хв тому`;
+        if (diffHours < 24) return `${diffHours} год тому`;
+        if (diffDays < 7) return `${diffDays} дн тому`;
+
+        return date.toLocaleDateString('uk-UA', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => errorDiv.style.display = 'none', 5000);
+    }
+
+    function showSuccess(message) {
+        const successDiv = document.getElementById('success');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        setTimeout(() => successDiv.style.display = 'none', 3000);
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    loadBookDetails();
+</script>
+</body>
+</html>
