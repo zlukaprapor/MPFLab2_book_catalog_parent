@@ -4,16 +4,30 @@ import com.bookapp.core.domain.Book;
 import com.bookapp.core.domain.Page;
 import com.bookapp.core.domain.PageRequest;
 import com.bookapp.core.port.CatalogRepositoryPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реалізація репозиторію каталогу із Spring анотацією
+ *
+ * @Repository - спеціалізована @Component для рівня доступу до даних
+ * Spring автоматично обробляє винятки JDBC та перетворює їх у DataAccessException
+ */
+@Repository
 public class CatalogRepository implements CatalogRepositoryPort {
+    private static final Logger log = LoggerFactory.getLogger(CatalogRepository.class);
 
     @Override
     public Page<Book> findBooks(String query, PageRequest pageRequest) {
+        log.debug("Finding books: query='{}', page={}, size={}",
+                query, pageRequest.getPage(), pageRequest.getSize());
+
         String sql = buildSearchQuery(query);
         String countSql = buildCountQuery(query);
 
@@ -23,12 +37,15 @@ public class CatalogRepository implements CatalogRepositoryPort {
 
             return new Page<>(books, pageRequest.getPage(), pageRequest.getSize(), total);
         } catch (SQLException e) {
+            log.error("Failed to search books", e);
             throw new RuntimeException("Failed to search books", e);
         }
     }
 
     @Override
     public Optional<Book> findBookById(Long id) {
+        log.debug("Finding book by id={}", id);
+
         String sql = "SELECT id, title, author, isbn, publication_year FROM books WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -38,10 +55,14 @@ public class CatalogRepository implements CatalogRepositoryPort {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(mapBook(rs));
+                Book book = mapBook(rs);
+                log.debug("Found book: {}", book);
+                return Optional.of(book);
             }
+            log.debug("Book not found with id={}", id);
             return Optional.empty();
         } catch (SQLException e) {
+            log.error("Failed to find book", e);
             throw new RuntimeException("Failed to find book", e);
         }
     }
@@ -69,20 +90,17 @@ public class CatalogRepository implements CatalogRepositoryPort {
     private List<Book> executeSearchQuery(Connection conn, String sql, String query, PageRequest pr)
             throws SQLException {
 
-        // Додаємо ORDER BY, LIMIT, OFFSET
         sql += " ORDER BY " + getSortColumn(pr.getSort()) + " LIMIT ? OFFSET ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             int idx = 1;
 
-            // Параметри для WHERE
             if (query != null && !query.trim().isEmpty()) {
                 String pattern = "%" + query.toLowerCase() + "%";
                 stmt.setString(idx++, pattern);
                 stmt.setString(idx++, pattern);
             }
 
-            // Параметри для LIMIT і OFFSET
             stmt.setInt(idx++, pr.getSize());
             stmt.setInt(idx, pr.getPage() * pr.getSize());
 

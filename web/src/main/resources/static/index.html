@@ -150,12 +150,6 @@
             font-size: 0.9rem;
         }
 
-        .book-isbn, .book-year {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
         .loading {
             text-align: center;
             padding: 40px;
@@ -179,20 +173,10 @@
             color: #666;
         }
 
-        .no-results h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-
             .search-controls {
                 flex-direction: column;
             }
-
             .books-grid {
                 grid-template-columns: 1fr;
             }
@@ -203,32 +187,25 @@
 <div class="container">
     <header>
         <h1>📚 Каталог книг</h1>
-        <p class="subtitle">Знайдіть свою наступну улюблену книгу</p>
+        <p class="subtitle">Spring Boot Application</p>
     </header>
 
     <div class="search-box">
         <div class="search-controls">
-            <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Пошук за назвою або автором..."
-                    onkeypress="if(event.key==='Enter') searchBooks()">
-
+            <input type="text" id="searchInput" placeholder="Пошук за назвою або автором..."
+                   onkeypress="if(event.key==='Enter') searchBooks()">
             <select id="sortSelect" onchange="searchBooks()">
                 <option value="title">За назвою</option>
                 <option value="author">За автором</option>
                 <option value="year">За роком</option>
             </select>
-
             <select id="sizeSelect" onchange="searchBooks()">
                 <option value="6">6 на сторінці</option>
                 <option value="12" selected>12 на сторінці</option>
                 <option value="24">24 на сторінці</option>
             </select>
-
             <button onclick="searchBooks()">🔍 Пошук</button>
         </div>
-
         <div class="pagination">
             <button id="prevBtn" onclick="prevPage()" disabled>← Назад</button>
             <span class="page-info" id="pageInfo">Сторінка 1</span>
@@ -261,15 +238,14 @@
             sort: sort
         });
 
-        if (query) {
-            params.append('q', query);
-        }
+        if (query) params.append('q', query);
 
         showLoading(true);
         hideError();
 
         try {
-            const response = await fetch(`/books?${params}`);
+            // Використовуємо REST API endpoint
+            const response = await fetch(`/api/books?${params}`);
 
             if (!response.ok) {
                 throw new Error('Помилка завантаження даних');
@@ -304,8 +280,8 @@
                 <div class="book-title">${escapeHtml(book.title)}</div>
                 <div class="book-author">✍️ ${escapeHtml(book.author)}</div>
                 <div class="book-details">
-                    ${book.isbn ? `<span class="book-isbn">📖 ${escapeHtml(book.isbn)}</span>` : ''}
-                    ${book.year ? `<span class="book-year">📅 ${book.year}</span>` : ''}
+                    ${book.isbn ? `<span>📖 ${escapeHtml(book.isbn)}</span>` : ''}
+                    ${book.year ? `<span>📅 ${book.year}</span>` : ''}
                 </div>
             </div>
         `).join('');
@@ -361,7 +337,6 @@
         return div.innerHTML;
     }
 
-    // Завантажити книги при відкритті сторінки
     loadBooks();
 </script>
 </body>

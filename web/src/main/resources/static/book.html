@@ -82,9 +82,6 @@
             font-size: 1.5rem;
             color: #333;
             margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .add-comment-form {
@@ -141,7 +138,6 @@
 
         .btn-primary:hover {
             background: #5568d3;
-            transform: translateY(-1px);
         }
 
         .btn-danger {
@@ -166,7 +162,6 @@
         .comment-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 10px;
         }
 
@@ -186,17 +181,6 @@
             margin-bottom: 10px;
         }
 
-        .comment-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .no-comments {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
         .error, .success {
             padding: 16px;
             border-radius: 8px;
@@ -206,13 +190,11 @@
         .error {
             background: #ffe0e0;
             color: #cc0000;
-            border-left: 4px solid #ff4444;
         }
 
         .success {
             background: #e0ffe0;
             color: #008800;
-            border-left: 4px solid #44ff44;
         }
 
         .loading {
@@ -220,21 +202,6 @@
             padding: 40px;
             color: white;
             font-size: 1.2rem;
-        }
-
-        @media (max-width: 768px) {
-            .book-detail, .comments-section {
-                padding: 25px;
-            }
-
-            .book-title {
-                font-size: 1.5rem;
-            }
-
-            .book-meta {
-                flex-direction: column;
-                gap: 10px;
-            }
         }
     </style>
 </head>
@@ -259,30 +226,18 @@
         </div>
 
         <div class="comments-section">
-            <div class="comments-header">
-                💬 Відгуки
-                <span id="commentCount"></span>
-            </div>
+            <div class="comments-header">💬 Відгуки <span id="commentCount"></span></div>
 
             <div class="add-comment-form">
                 <h3 style="margin-bottom: 20px;">Додати відгук</h3>
                 <form id="commentForm" onsubmit="addComment(event)">
                     <div class="form-group">
                         <label for="authorInput">Ваше ім'я</label>
-                        <input
-                                type="text"
-                                id="authorInput"
-                                maxlength="100"
-                                required
-                                placeholder="Введіть ваше ім'я">
+                        <input type="text" id="authorInput" maxlength="100" required>
                     </div>
                     <div class="form-group">
                         <label for="textInput">Ваш відгук</label>
-                        <textarea
-                                id="textInput"
-                                maxlength="1000"
-                                required
-                                placeholder="Поділіться своїми враженнями про книгу..."></textarea>
+                        <textarea id="textInput" maxlength="1000" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Додати відгук</button>
                 </form>
@@ -307,7 +262,8 @@
         }
 
         try {
-            const response = await fetch(`/books/${bookId}`);
+            // Використовуємо REST API endpoint
+            const response = await fetch(`/api/books/${bookId}`);
 
             if (!response.ok) {
                 if (response.status === 404) {
@@ -332,11 +288,9 @@
     function displayBook(book) {
         document.getElementById('bookTitle').textContent = book.title;
         document.getElementById('bookAuthor').textContent = '✍️ ' + book.author;
-
         if (book.isbn) {
             document.getElementById('bookIsbn').textContent = '📖 ISBN: ' + book.isbn;
         }
-
         if (book.year) {
             document.getElementById('bookYear').textContent = '📅 Рік: ' + book.year;
         }
@@ -349,7 +303,7 @@
         count.textContent = `(${commentsList.length})`;
 
         if (commentsList.length === 0) {
-            container.innerHTML = '<div class="no-comments">Ще немає відгуків. Будьте першим!</div>';
+            container.innerHTML = '<div style="text-align:center;padding:40px;color:#999">Ще немає відгуків. Будьте першим!</div>';
             return;
         }
 
@@ -367,14 +321,12 @@
                     </div>
                     <div class="comment-text">${escapeHtml(comment.text)}</div>
                     ${canDelete ? `
-                        <div class="comment-actions">
-                            <button class="btn btn-danger" onclick="deleteComment(${comment.id})">
-                                🗑️ Видалити
-                            </button>
-                            <span style="color: #999; font-size: 0.85rem;">
-                                (можна видалити протягом 24 год)
-                            </span>
-                        </div>
+                        <button class="btn btn-danger" onclick="deleteComment(${comment.id})">
+                            🗑️ Видалити
+                        </button>
+                        <span style="color: #999; font-size: 0.85rem; margin-left: 10px;">
+                            (можна видалити протягом 24 год)
+                        </span>
                     ` : ''}
                 </div>
             `;
@@ -393,7 +345,7 @@
         }
 
         try {
-            const response = await fetch(`/books/${bookId}/comments`, {
+            const response = await fetch(`/api/books/${bookId}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -403,7 +355,7 @@
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Помилка додавання відгуку');
+                throw new Error(errorData.error || 'Помилка додавання відгуку');
             }
 
             const newComment = await response.json();
@@ -423,13 +375,13 @@
         }
 
         try {
-            const response = await fetch(`/books/${bookId}/comments/${commentId}`, {
+            const response = await fetch(`/api/books/${bookId}/comments/${commentId}`, {
                 method: 'DELETE'
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Помилка видалення відгуку');
+                throw new Error(errorData.error || 'Помилка видалення відгуку');
             }
 
             comments = comments.filter(c => c.id !== commentId);
