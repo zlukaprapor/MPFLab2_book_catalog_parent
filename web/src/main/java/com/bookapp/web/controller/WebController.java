@@ -20,11 +20,11 @@ public class WebController {
         return "redirect:/index.html";
     }
 
-    /**
-     * Каталог книг
-     */
-    @GetMapping("/books")
-    public String books() {
-        return "redirect:/index.html";
-    }
+//    /**
+//     * Каталог книг
+//     */
+//    @GetMapping("/books")
+//    public String books() {
+//        return "redirect:/index.html";
+//    }
 }
