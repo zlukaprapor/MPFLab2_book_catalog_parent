@@ -6,37 +6,21 @@ import com.bookapp.core.exception.ValidationException;
 import com.bookapp.core.port.CommentRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Сервіс коментарів із використанням Spring DI та конфігурації
- */
-@Service
+
 public class CommentService {
     private static final Logger log = LoggerFactory.getLogger(CommentService.class);
 
-    // Ін'єкція значень із application.properties
-    @Value("${comments.max-author-length:100}")
-    private int maxAuthorLength;
-
-    @Value("${comments.max-text-length:1000}")
-    private int maxTextLength;
-
-    @Value("${comments.delete-allowed-hours:24}")
-    private long deleteAllowedHours;
+    private int maxAuthorLength = 100;
+    private int maxTextLength = 1000;
+    private long deleteAllowedHours = 24;
 
     private final CommentRepositoryPort repository;
 
-    /**
-     * Ін'єкція через конструктор (найкращий спосіб)
-     */
-    @Autowired
     public CommentService(CommentRepositoryPort repository) {
         this.repository = repository;
         log.info("CommentService initialized");

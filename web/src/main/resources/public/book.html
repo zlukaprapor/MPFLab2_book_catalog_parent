@@ -375,7 +375,7 @@
         }
 
         try {
-            const response = await fetch(`/books/${bookId}/comments/${commentId}`, {
+            const response = await fetch(`/api/books/${bookId}/comments/${commentId}`, {
                 method: 'DELETE'
             });
 

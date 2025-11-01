@@ -6,20 +6,14 @@ import com.bookapp.core.domain.PageRequest;
 import com.bookapp.core.port.CatalogRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Реалізація репозиторію каталогу із Spring анотацією
- *
- * @Repository - спеціалізована @Component для рівня доступу до даних
- * Spring автоматично обробляє винятки JDBC та перетворює їх у DataAccessException
- */
-@Repository
+
 public class CatalogRepository implements CatalogRepositoryPort {
     private static final Logger log = LoggerFactory.getLogger(CatalogRepository.class);
 

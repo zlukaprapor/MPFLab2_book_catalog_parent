@@ -6,28 +6,14 @@ import com.bookapp.core.domain.PageRequest;
 import com.bookapp.core.port.CatalogRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-/**
- * Сервіс каталогу книг
- *
- * @Service - Spring анотація, яка позначає цей клас як бізнес-сервіс
- * Spring автоматично створить бін цього класу та зареєструє його в контексті
- */
-@Service
+
+
 public class CatalogService {
     private static final Logger log = LoggerFactory.getLogger(CatalogService.class);
 
     private final CatalogRepositoryPort repository;
 
-    /**
-     * Ін'єкція залежності через конструктор (рекомендований спосіб)
-     * Spring автоматично знайде бін, що реалізує CatalogRepositoryPort
-     *
-     * @Autowired можна не писати для конструкторів (Spring Boot 4.3+)
-     */
-    @Autowired
     public CatalogService(CatalogRepositoryPort repository) {
         this.repository = repository;
         log.info("CatalogService initialized with repository: {}",
