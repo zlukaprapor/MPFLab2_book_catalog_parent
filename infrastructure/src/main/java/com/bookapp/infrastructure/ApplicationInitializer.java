@@ -20,5 +20,4 @@ public class ApplicationInitializer {
         CommentRepositoryPort repo = new CommentRepository();
         return new CommentService(repo);
     }
-
 }
