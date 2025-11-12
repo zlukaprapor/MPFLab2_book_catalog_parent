@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface CatalogRepositoryPort {
     Page<Book> findBooks(String query, PageRequest pageRequest);
     Optional<Book> findBookById(Long id);
+    Book save(Book book);
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header" class="site-header">
+    <div class="header-content">
+        <a th:href="@{/books}" class="logo">
+            <span th:text="#{app.name}">📚 Книжковий каталог</span>
+        </a>
+        <div class="lang-switcher">
+            <a th:href="@{''(lang=uk)}" class="lang-link">🇺🇦 UA</a>
+            <a th:href="@{''(lang=en)}" class="lang-link">🇬🇧 EN</a>
+        </div>
+    </div>
+</header>
+</body>
+</html>

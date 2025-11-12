@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{page.books.title}">Каталог книг</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+    <header>
+        <h1 th:text="#{page.books.heading}">📚 Каталог книг</h1>
+        <p class="subtitle" th:text="#{page.books.subtitle}">Знайдіть цікаві книги</p>
+    </header>
+
+    <div class="add-book-section">
+        <a th:href="@{/books/add}" class="btn-add-book" th:text="#{button.add.book}">
+            ➕ Додати книгу
+        </a>
+    </div>
+
+    <div class="search-box">
+        <form th:action="@{/books}" method="get" class="search-controls">
+            <input type="text" name="q" th:value="${query}"
+                   th:placeholder="#{form.search.placeholder}">
+            <select name="sort">
+                <option value="title" th:selected="${sort == 'title'}"
+                        th:text="#{sort.title}">За назвою</option>
+                <option value="author" th:selected="${sort == 'author'}"
+                        th:text="#{sort.author}">За автором</option>
+                <option value="year" th:selected="${sort == 'year'}"
+                        th:text="#{sort.year}">За роком</option>
+            </select>
+            <select name="size">
+                <option value="6">6</option>
+                <option value="12" selected>12</option>
+                <option value="24">24</option>
+            </select>
+            <input type="hidden" name="page" th:value="${currentPage}">
+            <button type="submit" th:text="#{button.search}">🔍 Пошук</button>
+        </form>
+
+        <div class="pagination" th:if="${bookPage.totalPages > 1}">
+            <button th:if="${bookPage.hasPrevious}"
+                    th:onclick="|window.location.href='@{/books(page=${currentPage - 1}, size=${bookPage.pageSize}, sort=${sort}, q=${query})}'|"
+                    th:text="#{button.previous}">← Назад</button>
+
+            <span class="page-info"
+                  th:text="#{pagination.info(${currentPage + 1}, ${bookPage.totalPages})}">
+                    Сторінка 1 з 10
+                </span>
+
+            <button th:if="${bookPage.hasNext}"
+                    th:onclick="|window.location.href='@{/books(page=${currentPage + 1}, size=${bookPage.pageSize}, sort=${sort}, q=${query})}'|"
+                    th:text="#{button.next}">Вперед →</button>
+        </div>
+    </div>
+
+    <div th:if="${bookPage.content.isEmpty()}" class="no-results">
+        <h3 th:text="#{message.no.books}">😕 Немає книг</h3>
+    </div>
+
+    <div th:unless="${bookPage.content.isEmpty()}" class="books-grid">
+        <div th:each="book : ${bookPage.content}" class="book-card"
+             th:onclick="|window.location.href='@{/books/{id}(id=${book.id})}'|"
+             style="cursor: pointer;">
+            <div class="book-title" th:text="${book.title}">Назва</div>
+            <div class="book-author" th:text="|✍️ ${book.author}|">Автор</div>
+            <div class="book-details">
+                <span th:if="${book.isbn}" th:text="|📖 ${book.isbn}|">ISBN</span>
+                <span th:if="${book.year}" th:text="|📅 ${book.year}|">Рік</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
