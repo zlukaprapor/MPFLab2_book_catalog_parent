@@ -1,5 +1,7 @@
 package com.bookapp.persistence;
 
+import java.sql.Statement;
+import java.sql.Types;
 import com.bookapp.core.domain.Book;
 import com.bookapp.core.domain.Page;
 import com.bookapp.core.domain.PageRequest;
@@ -60,6 +62,41 @@ public class CatalogRepository implements CatalogRepositoryPort {
             throw new RuntimeException("Failed to find book", e);
         }
     }
+
+    @Override
+    public Book save(Book book) {
+        // ✅ СИНХРОНІЗОВАНО З DatabaseConnection!
+        String sql = "INSERT INTO books (title, author, isbn, publication_year) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, book.getTitle());
+            stmt.setString(2, book.getAuthor());
+            stmt.setString(3, book.getIsbn());
+            if (book.getYear() != null) {
+                stmt.setInt(4, book.getYear());
+            } else {
+                stmt.setNull(4, Types.INTEGER);
+            }
+
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    Long newId = rs.getLong(1);
+                    return new Book(newId, book.getTitle(), book.getAuthor(),
+                            book.getIsbn(), book.getYear());
+                }
+            }
+
+            throw new RuntimeException("Failed to get generated book ID");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error saving book", e);
+        }
+    }
+
 
     private String buildSearchQuery(String query) {
         StringBuilder sql = new StringBuilder(
