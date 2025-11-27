@@ -7,6 +7,7 @@ import com.bookapp.core.domain.PageRequest;
 import com.bookapp.core.service.CatalogService;
 import com.bookapp.core.service.CommentService;
 import com.bookapp.web.dto.BookFormDto;
+import com.bookapp.web.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,9 @@ public class BookController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private MailService mailService;
 
     @GetMapping
     public String listBooks(
@@ -68,7 +72,7 @@ public class BookController {
     @PostMapping("/add")
     public String addBook(@ModelAttribute("book") BookFormDto bookDto, Model model) {
         try {
-            System.out.println("🔍 DEBUG: BookFormDto received:");
+            System.out.println("📝 DEBUG: BookFormDto received:");
             System.out.println("  - Title: " + bookDto.getTitle());
             System.out.println("  - Author: " + bookDto.getAuthor());
             System.out.println("  - ISBN: " + bookDto.getIsbn());
@@ -88,6 +92,15 @@ public class BookController {
 
             System.out.println("✅ DEBUG: Book saved with ID: " + savedBook.getId());
 
+            // Відправка email повідомлення
+            try {
+                mailService.sendNewBookEmail(savedBook);
+                System.out.println("📧 Email notification sent for book: " + savedBook.getTitle());
+            } catch (Exception e) {
+                System.err.println("⚠️ Failed to send email: " + e.getMessage());
+                // Не блокуємо додавання книги, якщо email не відправився
+            }
+
             return "redirect:/books";
 
         } catch (Exception e) {
@@ -99,7 +112,6 @@ public class BookController {
             return "book-form";
         }
     }
-
 
     @PostMapping("/{bookId}/comments")
     public String addComment(
