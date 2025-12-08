@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 public class CommentService {
     private static final Logger log = LoggerFactory.getLogger(CommentService.class);
 
@@ -29,6 +28,11 @@ public class CommentService {
     public List<Comment> getCommentsByBookId(Long bookId) {
         log.debug("Getting comments for book_id={}", bookId);
         return repository.findCommentsByBookId(bookId);
+    }
+
+    public List<Comment> getCommentsByUserId(Long userId) {
+        log.debug("Getting comments for user_id={}", userId);
+        return repository.findCommentsByUserId(userId);
     }
 
     public Comment addComment(Long bookId, String author, String text) {
