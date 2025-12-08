@@ -4,8 +4,10 @@ import com.bookapp.core.domain.Book;
 import com.bookapp.core.domain.Comment;
 import com.bookapp.core.domain.Page;
 import com.bookapp.core.domain.PageRequest;
+import com.bookapp.core.domain.User;
 import com.bookapp.core.service.CatalogService;
 import com.bookapp.core.service.CommentService;
+import com.bookapp.core.service.UserService;
 import com.bookapp.web.dto.BookFormDto;
 import com.bookapp.web.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class BookController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private MailService mailService;
@@ -72,12 +77,6 @@ public class BookController {
     @PostMapping("/add")
     public String addBook(@ModelAttribute("book") BookFormDto bookDto, Model model) {
         try {
-            System.out.println("📝 DEBUG: BookFormDto received:");
-            System.out.println("  - Title: " + bookDto.getTitle());
-            System.out.println("  - Author: " + bookDto.getAuthor());
-            System.out.println("  - ISBN: " + bookDto.getIsbn());
-            System.out.println("  - Year: " + bookDto.getYear());
-
             Book book = new Book(
                     null,
                     bookDto.getTitle(),
@@ -86,27 +85,18 @@ public class BookController {
                     bookDto.getYear()
             );
 
-            System.out.println("📚 DEBUG: Creating book: " + book.getTitle());
-
             Book savedBook = catalogService.addBook(book);
-
-            System.out.println("✅ DEBUG: Book saved with ID: " + savedBook.getId());
 
             // Відправка email повідомлення
             try {
                 mailService.sendNewBookEmail(savedBook);
-                System.out.println("📧 Email notification sent for book: " + savedBook.getTitle());
             } catch (Exception e) {
                 System.err.println("⚠️ Failed to send email: " + e.getMessage());
-                // Не блокуємо додавання книги, якщо email не відправився
             }
 
             return "redirect:/books";
 
         } catch (Exception e) {
-            System.out.println("❌ ERROR: " + e.getMessage());
-            e.printStackTrace();
-
             model.addAttribute("error", "❌ Помилка: " + e.getMessage());
             model.addAttribute("book", bookDto);
             return "book-form";

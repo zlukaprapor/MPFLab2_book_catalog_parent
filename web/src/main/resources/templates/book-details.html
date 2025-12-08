@@ -40,11 +40,17 @@
         <div th:unless="${comments.isEmpty()}">
             <div th:each="comment : ${comments}" class="comment">
                 <div class="comment-header">
-                    <span class="comment-author" th:text="${comment.author}">Автор</span>
+                    <span class="comment-author">
+                        <a th:href="@{/users/{id}/comments(id=${comment.id})}"
+                           style="color: #667eea; text-decoration: none; font-weight: 600;"
+                           th:text="${comment.author}">
+                            Автор
+                        </a>
+                    </span>
                     <span class="comment-date"
                           th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">
-                            Дата
-                        </span>
+                        Дата
+                    </span>
                 </div>
                 <p th:text="${comment.text}">Текст</p>
 

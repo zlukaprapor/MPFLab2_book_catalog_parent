@@ -48,10 +48,10 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- Infrastructure -->
+        <!-- Persistence module (замість infrastructure) -->
         <dependency>
             <groupId>com.bookapp</groupId>
-            <artifactId>infrastructure</artifactId>
+            <artifactId>persistence</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
