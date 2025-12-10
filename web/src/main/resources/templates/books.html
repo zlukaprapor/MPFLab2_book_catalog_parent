@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +11,26 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container">
+    <!-- Інформація про користувача -->
+    <div class="user-info" style="text-align: right; color: white; margin-bottom: 20px;">
+        <span sec:authorize="isAuthenticated()">
+            👤 Привіт, <strong><span sec:authentication="name"></span></strong>
+            (<span sec:authentication="authorities"></span>)
+        </span>
+        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 15px;">
+            <button type="submit" class="btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">
+                🚪 Вийти
+            </button>
+        </form>
+    </div>
+
     <header>
         <h1 th:text="#{page.books.heading}">📚 Каталог книг</h1>
         <p class="subtitle" th:text="#{page.books.subtitle}">Знайдіть цікаві книги</p>
     </header>
 
-    <div class="add-book-section">
+    <!-- Кнопка додавання книги - тільки для ADMIN -->
+    <div class="add-book-section" sec:authorize="hasRole('ADMIN')">
         <a th:href="@{/books/add}" class="btn-add-book" th:text="#{button.add.book}">
             ➕ Додати книгу
         </a>

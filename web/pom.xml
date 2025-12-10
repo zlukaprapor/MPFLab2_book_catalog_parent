@@ -36,6 +36,18 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- Spring Boot Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Thymeleaf Security extras -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
         <!-- FreeMarker для email шаблонів -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -48,7 +60,7 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- Persistence module (замість infrastructure) -->
+        <!-- Persistence module -->
         <dependency>
             <groupId>com.bookapp</groupId>
             <artifactId>persistence</artifactId>

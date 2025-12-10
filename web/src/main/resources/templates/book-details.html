@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${book.title}">Деталі книги</title>
@@ -21,17 +22,34 @@
     <div class="comments-section">
         <h2 th:text="#{section.comments.title}">💬 Коментарі</h2>
 
-        <form th:action="@{/books/{id}/comments(id=${book.id})}" method="post" class="comment-form">
-            <div class="form-group">
-                <label for="author" th:text="#{form.comment.author}">Ваше ім'я:</label>
-                <input type="text" id="author" name="author" required>
-            </div>
-            <div class="form-group">
-                <label for="text" th:text="#{form.comment.text}">Коментар:</label>
-                <textarea id="text" name="text" required></textarea>
-            </div>
-            <button type="submit" th:text="#{button.add.comment}">💬 Додати</button>
-        </form>
+        <!-- Форма додавання коментаря - тільки для авторизованих USER і ADMIN -->
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/books/{id}/comments(id=${book.id})}" method="post" class="comment-form">
+                <div class="form-group">
+                    <label for="author" th:text="#{form.comment.author}">Ваше ім'я:</label>
+                    <input type="text"
+                           id="author"
+                           name="author"
+                           th:value="${#authentication.name}"
+                           readonly
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="text" th:text="#{form.comment.text}">Коментар:</label>
+                    <textarea id="text" name="text" required></textarea>
+                </div>
+                <button type="submit" th:text="#{button.add.comment}">💬 Додати</button>
+            </form>
+        </div>
+
+        <div sec:authorize="!isAuthenticated()" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+            <p style="color: #666;">
+                Щоб залишити коментар, будь ласка,
+                <a th:href="@{/login}" style="color: #667eea; text-decoration: none; font-weight: 600;">увійдіть</a>
+                або
+                <a th:href="@{/register}" style="color: #667eea; text-decoration: none; font-weight: 600;">зареєструйтесь</a>
+            </p>
+        </div>
 
         <div th:if="${comments.isEmpty()}" class="no-comments">
             <p th:text="#{message.no.comments}">Ще немає коментарів</p>
@@ -54,8 +72,11 @@
                 </div>
                 <p th:text="${comment.text}">Текст</p>
 
-                <form th:action="@{/books/{bookId}/comments/{commentId}/delete(bookId=${book.id}, commentId=${comment.id})}"
-                      method="post" style="display:inline;">
+                <!-- Кнопка видалення - тільки для ADMIN -->
+                <form sec:authorize="hasRole('ADMIN')"
+                      th:action="@{/books/{bookId}/comments/{commentId}/delete(bookId=${book.id}, commentId=${comment.id})}"
+                      method="post"
+                      style="display:inline;">
                     <button type="submit" class="btn-delete" th:text="#{button.delete}">🗑️ Видалити</button>
                 </form>
             </div>
