@@ -2,14 +2,16 @@ package com.bookapp.web.dto;
 
 public class RegisterDto {
     private String username;
+    private String email;
     private String password;
     private String confirmPassword;
 
     public RegisterDto() {
     }
 
-    public RegisterDto(String username, String password, String confirmPassword) {
+    public RegisterDto(String username, String email, String password, String confirmPassword) {
         this.username = username;
+        this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
@@ -20,6 +22,14 @@ public class RegisterDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

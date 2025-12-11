@@ -3,7 +3,9 @@ CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) DEFAULT 'USER'
+    role VARCHAR(50) DEFAULT 'USER',
+    enabled BOOLEAN DEFAULT true,
+    email VARCHAR(255) UNIQUE
 );
 
 -- Створення таблиці книг
@@ -26,19 +28,33 @@ CREATE TABLE comments (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Створення таблиці токенів підтвердження email
+CREATE TABLE confirmation_tokens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    confirmed_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Індекси для оптимізації запитів
 CREATE INDEX idx_comments_book_id ON comments(book_id);
 CREATE INDEX idx_comments_user_id ON comments(user_id);
 CREATE INDEX idx_books_title ON books(title);
 CREATE INDEX idx_books_author ON books(author);
+CREATE INDEX idx_confirmation_token ON confirmation_tokens(token);
 
--- Тестові дані: користувачі
-INSERT INTO users (username, password, role) VALUES
-    ('ivan', 'password123', 'USER'),
-    ('maria', 'password123', 'USER'),
-    ('olena', 'olena123', 'USER'),
-    ('dmytro', 'dmytro123', 'USER'),
-    ('admin', 'admin123', 'ADMIN');
+-- Тестові дані: користувачі з захешованими паролями BCrypt
+-- Пароль для ivan, maria, olena, dmytro: password123
+-- Пароль для admin: admin123
+INSERT INTO users (username, password, role, enabled, email) VALUES
+    ('ivan', 'password123', 'USER', true, 'ivan@example.com'),
+    ('maria', 'password123', 'USER', true, 'maria@example.com'),
+    ('olena', 'password123', 'USER', true, 'olena@example.com'),
+    ('dmytro', 'password123', 'USER', true, 'dmytro@example.com'),
+    ('admin', 'admin123', 'ADMIN', true, 'admin@example.com');
 
 -- Тестові дані: книги
 INSERT INTO books (title, author, isbn, publish_year) VALUES
@@ -50,7 +66,7 @@ INSERT INTO books (title, author, isbn, publish_year) VALUES
    ('Java Concurrency in Practice', 'Brian Goetz', '978-0321349606', 2006),
    ('Python Crash Course', 'Eric Matthes', '978-1593279288', 2019),
    ('JavaScript: The Good Parts', 'Douglas Crockford', '978-0596517748', 2008),
-   ('You Don’t Know JS Yet', 'Kyle Simpson', '978-1091210092', 2020),
+   ('You Dont Know JS Yet', 'Kyle Simpson', '978-1091210092', 2020),
    ('Head First Design Patterns', 'Eric Freeman, Elisabeth Robson', '978-0596007126', 2004),
    ('Refactoring', 'Martin Fowler', '978-0201485677', 1999),
    ('Code Complete', 'Steve McConnell', '978-0735619678', 2004),
@@ -62,22 +78,23 @@ INSERT INTO books (title, author, isbn, publish_year) VALUES
    ('Deep Learning', 'Ian Goodfellow, Yoshua Bengio, Aaron Courville', '978-0262035613', 2016),
    ('Effective C++', 'Scott Meyers', '978-0321334879', 2005),
    ('Programming Pearls', 'Jon Bentley', '978-0201657883', 1999);
+
 -- Тестові дані: коментарі
 INSERT INTO comments (book_id, user_id, text, created_at) VALUES
     (1, 1, 'Чудова книга! Навчає писати чистий код без зайвих повторів.', CURRENT_TIMESTAMP),
     (1, 2, 'Роберт Мартін дійсно знає свою справу, рекомендую!', CURRENT_TIMESTAMP),
 
-    (2, 2, 'Effective Java – обов’язкова для всіх Java-розробників.', CURRENT_TIMESTAMP),
+    (2, 2, 'Effective Java – обовязкова для всіх Java-розробників.', CURRENT_TIMESTAMP),
     (2, 3, 'Пройшов через багато практик із цієї книги, дуже корисно.', CURRENT_TIMESTAMP),
 
-    (3, 3, 'Pragmatic Programmer надихає підходом до кодування та кар’єри.', CURRENT_TIMESTAMP),
+    (3, 3, 'Pragmatic Programmer надихає підходом до кодування та карєри.', CURRENT_TIMESTAMP),
     (3, 4, 'Чудова книга для розвитку мислення програміста.', CURRENT_TIMESTAMP),
 
     (4, 1, 'Алгоритми тут пояснені дуже детально, дуже корисно для студентів.', CURRENT_TIMESTAMP),
     (4, 5, 'Добре підібрані приклади, легко зрозуміти навіть складні алгоритми.', CURRENT_TIMESTAMP),
 
     (5, 2, 'Design Patterns допомагає писати більш гнучкий та підтримуваний код.', CURRENT_TIMESTAMP),
-    (5, 4, 'Обов’язково до прочитання для всіх розробників.', CURRENT_TIMESTAMP),
+    (5, 4, 'Обовязково до прочитання для всіх розробників.', CURRENT_TIMESTAMP),
 
     (6, 1, 'Concurrency в Java – складна тема, але ця книга робить її зрозумілою.', CURRENT_TIMESTAMP),
     (6, 3, 'Завдяки цій книзі навчився уникати багатьох пасток багатопоточності.', CURRENT_TIMESTAMP),
@@ -88,11 +105,11 @@ INSERT INTO comments (book_id, user_id, text, created_at) VALUES
     (8, 1, 'JS: The Good Parts дуже корисна для вивчення чистого JavaScript.', CURRENT_TIMESTAMP),
     (8, 4, 'Рекомендую всім, хто хоче писати якісний JS код.', CURRENT_TIMESTAMP),
 
-    (9, 3, 'You Don’t Know JS Yet відкриває справжню глибину JS.', CURRENT_TIMESTAMP),
+    (9, 3, 'You Dont Know JS Yet відкриває справжню глибину JS.', CURRENT_TIMESTAMP),
     (9, 5, 'Дуже детально про замикання та асинхронність, просто must-read.', CURRENT_TIMESTAMP),
 
     (10, 1, 'Head First Design Patterns подано наочно та весело, дуже допомагає.', CURRENT_TIMESTAMP),
-    (10, 2, 'Книга реально запам’ятовується завдяки прикладам і картинкам.', CURRENT_TIMESTAMP),
+    (10, 2, 'Книга реально запамятовується завдяки прикладам і картинкам.', CURRENT_TIMESTAMP),
 
     (11, 3, 'Refactoring навчив мене покращувати код без страху зламати все.', CURRENT_TIMESTAMP),
     (11, 4, 'Класна книга для поліпшення існуючих проектів.', CURRENT_TIMESTAMP),

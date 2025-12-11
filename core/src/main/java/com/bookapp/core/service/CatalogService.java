@@ -7,8 +7,7 @@ import com.bookapp.core.exception.ValidationException;
 import com.bookapp.core.port.CatalogRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
+import org.springframework.security.access.prepost.PreAuthorize;
 
 public class CatalogService {
     private static final Logger log = LoggerFactory.getLogger(CatalogService.class);
@@ -21,6 +20,7 @@ public class CatalogService {
                 repository.getClass().getSimpleName());
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Book> searchBooks(String query, PageRequest pageRequest) {
         log.debug("Searching books with query='{}', page={}, size={}",
                 query, pageRequest.getPage(), pageRequest.getSize());
@@ -33,16 +33,18 @@ public class CatalogService {
         return result;
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Book getBookById(Long id) {
         log.debug("Getting book by id={}", id);
         return repository.findBookById(id).orElse(null);
     }
 
     /**
-     * Додавання нової книги
+     * Додавання нової книги - тільки для ADMIN
      */
+    @PreAuthorize("hasRole('ADMIN')")
     public Book addBook(Book book) {
-        log.debug("Adding new book: title='{}'", book.getTitle());
+        log.debug("Adding new book: title='{}' by user with ADMIN role", book.getTitle());
 
         if (book.getTitle() == null || book.getTitle().trim().isEmpty()) {
             throw new ValidationException("Назва книги є обов'язковою");
@@ -55,5 +57,14 @@ public class CatalogService {
         log.info("Book added: id={}, title='{}'", savedBook.getId(), savedBook.getTitle());
 
         return savedBook;
+    }
+
+    /**
+     * Видалення книги - тільки для ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteBook(Long id) {
+        log.info("Deleting book with id={} by ADMIN", id);
+        // Реалізація видалення
     }
 }

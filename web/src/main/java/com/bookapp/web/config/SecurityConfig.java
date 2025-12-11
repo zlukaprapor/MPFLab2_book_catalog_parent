@@ -1,8 +1,11 @@
 package com.bookapp.web.config;
 
+import com.bookapp.web.security.CustomLogoutHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,7 +14,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
+    @Autowired
+    private CustomLogoutHandler customLogoutHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -22,29 +29,26 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Публічні ресурси
+                        // Статичні ресурси доступні всім
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-
-                        // H2 Console (тільки для розробки!)
                         .requestMatchers("/h2-console/**").permitAll()
 
-                        // Сторінки авторизації та реєстрації
+                        // Сторінки авторизації та реєстрації доступні всім
                         .requestMatchers("/login", "/register", "/auth/**").permitAll()
+                        .requestMatchers("/confirm").permitAll()
 
-                        // Перегляд книг - для USER і ADMIN
-                        .requestMatchers(HttpMethod.GET, "/books", "/books/{id}").hasAnyRole("USER", "ADMIN")
-
-                        // Додавання книг - тільки ADMIN
+                        // Доступ для ADMIN до управління книгами
                         .requestMatchers("/books/add", "/books/*/edit", "/books/*/delete").hasRole("ADMIN")
-
-                        // Коментарі - додавання для USER і ADMIN, видалення тільки ADMIN
-                        .requestMatchers(HttpMethod.POST, "/books/*/comments").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/books/*/comments/*/delete").hasRole("ADMIN")
 
-                        // API - тільки для авторизованих
+                        // Доступ для USER та ADMIN до перегляду книг та додавання коментарів
+                        .requestMatchers(HttpMethod.GET, "/books", "/books/{id}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/books/*/comments").hasAnyRole("USER", "ADMIN")
+
+                        // Всі API-запити потребують авторизації
                         .requestMatchers("/api/**").authenticated()
 
-                        // Решта запитів - авторизація обов'язкова
+                        // Все інше потребує авторизації
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -56,6 +60,7 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
+                        .addLogoutHandler(customLogoutHandler) // наш кастомний handler
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
@@ -64,13 +69,8 @@ public class SecurityConfig {
                         .accessDeniedPage("/403")
                 );
 
-        // Вимкнення CSRF та Frame Options для H2 Console (тільки для розробки!)
-        http.csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**")
-        );
-        http.headers(headers -> headers
-                .frameOptions(frame -> frame.sameOrigin())
-        );
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));
+        http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }

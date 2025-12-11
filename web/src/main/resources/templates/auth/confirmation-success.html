@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email підтверджено</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div class="form-card" style="text-align: center;">
+            <h1 style="font-size: 5rem; margin-bottom: 20px;">✅</h1>
+            <h2 style="color: #28a745; margin-bottom: 10px;">Email успішно підтверджено!</h2>
+            <p style="color: #666; margin-bottom: 30px;" th:text="${message}">
+                Ваш акаунт активовано. Тепер ви можете увійти в систему.
+            </p>
+            <div class="form-actions" style="justify-content: center;">
+                <a th:href="@{/login}" class="btn btn-primary">
+                    🔓 Увійти в систему
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
