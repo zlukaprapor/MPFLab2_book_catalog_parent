@@ -22,6 +22,12 @@ public class UserEntity {
     @Column(length = 50)
     private String role;
 
+    @Column(nullable = false)
+    private Boolean enabled = false;
+
+    @Column(unique = true, length = 255)
+    private String email;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> comments = new ArrayList<>();
 
@@ -33,6 +39,7 @@ public class UserEntity {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.enabled = false;
     }
 
     // Getters and Setters
@@ -68,6 +75,22 @@ public class UserEntity {
         this.role = role;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public List<CommentEntity> getComments() {
         return comments;
     }
@@ -91,6 +114,6 @@ public class UserEntity {
 
     @Override
     public String toString() {
-        return "UserEntity{id=" + id + ", username='" + username + "', role='" + role + "'}";
+        return "UserEntity{id=" + id + ", username='" + username + "', role='" + role + "', enabled=" + enabled + "}";
     }
 }

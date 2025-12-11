@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Доступ заборонено</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div class="form-card" style="text-align: center;">
+            <h1 style="font-size: 5rem; color: #ff4444; margin-bottom: 20px;">🚫</h1>
+            <h2 style="color: #333; margin-bottom: 10px;">403 - Доступ заборонено</h2>
+            <p style="color: #666; margin-bottom: 30px;">
+                У вас немає прав для доступу до цієї сторінки.
+            </p>
+            <p style="color: #999; margin-bottom: 30px;">
+                Для виконання цієї дії потрібні права адміністратора.
+            </p>
+            <div class="form-actions" style="justify-content: center;">
+                <a th:href="@{/books}" class="btn btn-primary">
+                    ← Повернутися до каталогу
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

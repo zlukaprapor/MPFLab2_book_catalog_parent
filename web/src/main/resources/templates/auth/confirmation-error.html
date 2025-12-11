@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Помилка підтвердження</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div class="form-card" style="text-align: center;">
+            <h1 style="font-size: 5rem; color: #dc3545; margin-bottom: 20px;">❌</h1>
+            <h2 style="color: #dc3545; margin-bottom: 10px;">Помилка підтвердження</h2>
+            <p style="color: #666; margin-bottom: 20px;" th:text="${error}">
+                Невірний або прострочений токен підтвердження.
+            </p>
+            <p style="color: #999; margin-bottom: 30px;">
+                Можливо посилання застаріло (дійсне протягом 24 годин) або вже було використане.
+            </p>
+            <div class="form-actions" style="justify-content: center;">
+                <a th:href="@{/register}" class="btn btn-primary">
+                    📝 Зареєструватися знову
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

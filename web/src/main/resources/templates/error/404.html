@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Сторінку не знайдено</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div class="form-card" style="text-align: center;">
+            <h1 style="font-size: 5rem; color: #667eea; margin-bottom: 20px;">🔍</h1>
+            <h2 style="color: #333; margin-bottom: 10px;">404 - Сторінку не знайдено</h2>
+            <p style="color: #666; margin-bottom: 30px;">
+                На жаль, сторінка яку ви шукаєте не існує.
+            </p>
+            <p style="color: #999; margin-bottom: 30px;">
+                Можливо вона була видалена або ви ввели неправильну адресу.
+            </p>
+            <div class="form-actions" style="justify-content: center;">
+                <a th:href="@{/books}" class="btn btn-primary">
+                    🏠 На головну
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
