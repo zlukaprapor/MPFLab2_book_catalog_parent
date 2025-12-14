@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.addbook.title}">Додати книгу</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+    <div class="form-container">
+        <div class="form-card">
+            <h1 th:text="#{page.addbook.heading}">➕ Додати нову книгу</h1>
+
+            <div th:if="${error}" class="error-message" th:text="${error}">
+                Помилка
+            </div>
+
+            <form th:action="@{/books/add}" th:object="${book}" method="post">
+
+                <div class="form-group">
+                    <label for="title" th:text="#{form.label.title}">Назва книги:</label>
+                    <input type="text"
+                           id="title"
+                           th:field="*{title}"
+                           th:placeholder="#{form.placeholder.title}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="author" th:text="#{form.label.author}">Автор:</label>
+                    <input type="text"
+                           id="author"
+                           th:field="*{author}"
+                           th:placeholder="#{form.placeholder.author}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="isbn" th:text="#{form.label.isbn}">ISBN:</label>
+                    <input type="text"
+                           id="isbn"
+                           th:field="*{isbn}"
+                           th:placeholder="#{form.placeholder.isbn}">
+                </div>
+
+                <div class="form-group">
+                    <label for="year" th:text="#{form.label.year}">Рік видання:</label>
+                    <input type="number"
+                           id="year"
+                           th:field="*{year}"
+                           th:placeholder="#{form.placeholder.year}"
+                           min="1000"
+                           max="2100">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" th:text="#{button.save}">
+                        💾 Зберегти
+                    </button>
+                    <a th:href="@{/books}" class="btn btn-secondary" th:text="#{button.cancel}">
+                        ❌ Скасувати
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

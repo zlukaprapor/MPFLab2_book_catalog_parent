@@ -1,0 +1,91 @@
+﻿services:
+  # PostgreSQL Database
+  - type: pserv
+    name: book-catalog-db
+    plan: free
+    env: docker
+    region: frankfurt
+    databases:
+      - name: bookdb
+        user: bookuser
+
+  # Web Application
+  - type: web
+    name: book-catalog-web
+    plan: free
+    env: docker
+    region: frankfurt
+    branch: deploy
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+
+    envVars:
+      # Database configuration
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: book-catalog-db
+          property: connectionString
+
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: book-catalog-db
+          property: user
+
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: book-catalog-db
+          property: password
+
+      # Connection pool
+      - key: DB_POOL_SIZE
+        value: 5
+
+      - key: DB_POOL_MIN_IDLE
+        value: 2
+
+      # Application URL
+      - key: APP_BASE_URL
+        value: https://book-catalog-web.onrender.com
+
+      # Mail configuration (set these as secrets in Render dashboard)
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+
+      - key: SPRING_MAIL_PORT
+        value: 587
+
+      - key: SPRING_MAIL_USERNAME
+        sync: false  # Set manually in dashboard
+
+      - key: SPRING_MAIL_PASSWORD
+        sync: false  # Set manually in dashboard
+
+      - key: APP_MAIL_ADMIN
+        sync: false  # Set manually in dashboard
+
+      # Logging levels
+      - key: LOG_LEVEL_ROOT
+        value: INFO
+
+      - key: LOG_LEVEL_APP
+        value: INFO
+
+      - key: LOG_LEVEL_SPRING
+        value: WARN
+
+      - key: LOG_LEVEL_SECURITY
+        value: INFO
+
+      - key: LOG_LEVEL_SQL
+        value: WARN
+
+      # Admin credentials (set as secrets)
+      - key: ADMIN_USERNAME
+        value: admin
+
+      - key: ADMIN_PASSWORD
+        sync: false  # Set manually in dashboard
+
+      # Spring profile
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod

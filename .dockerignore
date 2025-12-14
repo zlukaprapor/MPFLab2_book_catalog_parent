@@ -1,0 +1,56 @@
+﻿# Git
+.git
+.gitignore
+.gitattributes
+
+# IDEs
+.idea
+*.iml
+.vscode
+.eclipse
+.settings
+
+# Build artifacts
+**/target/
+**/build/
+*.class
+*.jar
+*.war
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Documentation
+*.md
+README.md
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Application specific
+application-local.properties
+application-dev.properties

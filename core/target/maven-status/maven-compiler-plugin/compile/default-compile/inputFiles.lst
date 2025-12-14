@@ -1,0 +1,16 @@
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\port\CommentRepositoryPort.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\service\CommentService.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\service\UserService.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\domain\Book.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\exception\BookNotFoundException.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\exception\InvalidCommentDeleteException.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\domain\Comment.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\exception\BusinessException.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\domain\Page.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\exception\ValidationException.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\exception\CommentTooOldException.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\service\CatalogService.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\port\UserRepositoryPort.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\domain\User.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\port\CatalogRepositoryPort.java
+C:\Users\Oleksii\IdeaProjects\MPFLab2_book_catalog_parent\core\src\main\java\com\bookapp\core\domain\PageRequest.java

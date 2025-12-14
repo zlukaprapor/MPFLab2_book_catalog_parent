@@ -1,0 +1,16 @@
+com\bookapp\core\domain\Comment.class
+com\bookapp\core\service\CatalogService.class
+com\bookapp\core\exception\BookNotFoundException.class
+com\bookapp\core\exception\InvalidCommentDeleteException.class
+com\bookapp\core\port\CatalogRepositoryPort.class
+com\bookapp\core\service\UserService.class
+com\bookapp\core\port\UserRepositoryPort.class
+com\bookapp\core\port\CommentRepositoryPort.class
+com\bookapp\core\domain\PageRequest.class
+com\bookapp\core\exception\ValidationException.class
+com\bookapp\core\domain\User.class
+com\bookapp\core\exception\BusinessException.class
+com\bookapp\core\domain\Book.class
+com\bookapp\core\service\CommentService.class
+com\bookapp\core\exception\CommentTooOldException.class
+com\bookapp\core\domain\Page.class

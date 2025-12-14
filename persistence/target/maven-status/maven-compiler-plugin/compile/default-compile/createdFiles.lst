@@ -1,0 +1,11 @@
+com\bookapp\persistence\adapter\CatalogRepositoryAdapter.class
+com\bookapp\persistence\repository\UserRepository.class
+com\bookapp\persistence\adapter\UserRepositoryAdapter.class
+com\bookapp\persistence\repository\BookRepository.class
+com\bookapp\persistence\repository\ConfirmationTokenRepository.class
+com\bookapp\persistence\repository\CommentRepository.class
+com\bookapp\persistence\entity\ConfirmationTokenEntity.class
+com\bookapp\persistence\entity\CommentEntity.class
+com\bookapp\persistence\adapter\CommentRepositoryAdapter.class
+com\bookapp\persistence\entity\UserEntity.class
+com\bookapp\persistence\entity\BookEntity.class

@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div class="form-card">
+            <h1>📝 Реєстрація нового користувача</h1>
+
+            <div th:if="${param.success}" class="success-message">
+                ✅ Реєстрація успішна! Перевірте вашу пошту для підтвердження email.
+            </div>
+
+            <div th:if="${error}" class="error-message" th:text="${error}">
+                Помилка реєстрації
+            </div>
+
+            <form th:action="@{/register}" th:object="${user}" method="post">
+                <div class="form-group">
+                    <label for="username">Ім'я користувача:</label>
+                    <input type="text"
+                           id="username"
+                           th:field="*{username}"
+                           placeholder="Введіть ім'я користувача"
+                           required
+                           autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email"
+                           id="email"
+                           th:field="*{email}"
+                           placeholder="example@gmail.com"
+                           required>
+                    <small style="color: #666;">На цю адресу буде надіслано лист підтвердження</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password"
+                           id="password"
+                           th:field="*{password}"
+                           placeholder="Мінімум 4 символи"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Підтвердження пароля:</label>
+                    <input type="password"
+                           id="confirmPassword"
+                           th:field="*{confirmPassword}"
+                           placeholder="Повторіть пароль"
+                           required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        ✅ Зареєструватися
+                    </button>
+                    <a th:href="@{/login}" class="btn btn-secondary">
+                        ← Назад до входу
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .success-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #c3e6cb;
+    }
+    small {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85em;
+    }
+</style>
+</body>
+</html>
