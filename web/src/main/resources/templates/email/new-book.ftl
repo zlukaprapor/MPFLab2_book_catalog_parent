@@ -30,8 +30,4 @@
     </a>
 </div>
 
-<p style="color: #666; font-size: 14px;">
-    Дата додавання: ${createdAt?string("dd.MM.yyyy HH:mm")}
-</p>
-
 <#include "layout/footer.ftl">
