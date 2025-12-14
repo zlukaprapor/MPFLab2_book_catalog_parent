@@ -54,3 +54,7 @@ mvnw.cmd
 # Application specific
 application-local.properties
 application-dev.properties
+
+# Environment variables
+.env
+.env.*
